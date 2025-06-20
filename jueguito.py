@@ -23,20 +23,21 @@ def ventana_jugar():
             tablero[celda_actual[0]][0].config(bg=uti.col_celda)               
         tablero[id][0].config(bg= uti.col_celda_selec)
         celda_actual[0] = id
-
+    
     def generar_tabla(frame):
         for i in range(0,9):
             for j in range(0,9):
                 tam = tam_casilla
-                pos_x = (tam + 2) * j
-                pos_y = (tam + 2) * i
+                pos_x = (tam + 2) * j + 2
+                pos_y = (tam + 2) * i + 2
                 frame_actual = tk.Frame(frame)
                 btn_act = tk.Button(
                     frame,
-                    text=str(i)+str(j),
+                    text="",
                     font=("Arial",12),
                     bg=uti.col_celda,
                     fg= uti.col_texto,
+                    relief="flat",
                     command= ""
                 )
                 if i == j:
@@ -47,32 +48,65 @@ def ventana_jugar():
                 #frame_actual.place(x=pos_x,y=pos_y,width=15,height=15)
                 btn_act.bind('<Button 1>', lambda event, x=i,y=j: seleccionar_casilla( (str(x)+str(y)),celda_actual ))
                 btn_act.place(x=pos_x,y=pos_y,width=tam,height=tam)
-                tablero[(str(i)+str(j))] = [btn_act,str(i)+str(j)]
+                tablero[(str(i)+str(j))] = [btn_act, str(i)+str(j), 0]
 
+    # Funcion que coloca un numero en la casilla
+    # Recibe el número a colocar y el id de la casilla que se quiere marcar
+    def marcar_casilla(num,id):
+        if id == "":
+            return None
+        tablero[id][0].config(text=num)
+        tablero[id][2] = num
+        if num == "":
+            tablero[id][2] = "0"
+
+
+    # Esta función genera la interfaz
     def generar_interfaz():
-        pass
+        tam = tam_casilla
+        pos_y = 2
+        for i in range(0,9):
+            pos_x = (tam + 2) * i + 2
+            btn_act = tk.Button(
+                    frame_numeros,
+                    text= str(i+1),
+                    font=("Arial",12),
+                    bg=uti.col_celda,
+                    fg= uti.col_texto,
+                    relief="flat",
+                    command= lambda num=i+1: marcar_casilla(num, celda_actual[0])
+            )
+            btn_act.place(x=pos_x,y=pos_y, width=tam, height=tam)
+        btn_limpiar = tk.Button(
+                frame_numeros,
+                text= "Limpiar",
+                font=("Arial",12),
+                bg=uti.col_celda,
+                fg= uti.col_texto,
+                relief="flat",
+                command= lambda: marcar_casilla("", celda_actual[0])
+        )
+        btn_limpiar.place(x=2, y=pos_y + tam_casilla + tam_borde, width=tam_juego - 4, height=tam)
+            
 
     celda_actual = [""]
-    tam_casilla = 45
-    tam_juego = (tam_casilla + 2) * 9
+    tam_casilla = 50
+    tam_borde = 2
+    tam_juego = (tam_casilla + tam_borde) * 9 + tam_borde
     ventana = tk.Tk()
     ventana.geometry(str(tam_juego + 10)+"x"+str(tam_juego + 10))
-    frame_juego = tk.Frame(ventana,bg="#090909")
-    #frame_juego.grid(row=0, column=0, columnspan=1, padx= 0, pady= 0)
-    frame_juego.place(x=0, y=0, width=tam_juego, height=tam_juego)
+
+    frame_juego = tk.Frame(ventana,bg="#3E3E3E")
+    frame_juego.place(x=20, y=20, width=tam_juego, height=tam_juego)
+
+    frame_numeros = tk.Frame(ventana,bg="#090909")
+    frame_numeros.place(x=20, y=20 + tam_juego+ tam_casilla, width=tam_juego, height=tam_casilla * 2 + tam_borde * 3)
     tablero={}
+
+    
     generar_tabla(frame_juego)
     generar_interfaz()
     print(tablero)
-    
-
-    # Define column headings
-    
-    #tree.heading('Placa', text='Placa')
-    #tree.heading('Marca', text='Marca')
-    #tree.heading('Modelo', text='Modelo')
-    # Insert datos
-    #generar_tabla()
 
 
     ventana.mainloop() 
