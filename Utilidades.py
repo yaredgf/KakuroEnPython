@@ -5,6 +5,7 @@ import os
 import webbrowser
 import tkinter as tk
 
+
 ########## Funciones generales
 
 
@@ -70,3 +71,20 @@ def ayuda(nombre):
     ruta = os.path.split(__file__)[0]
     ruta += "\Manuales\pc_manual_de_usuario_"+nombre+".pdf"
     webbrowser.open(ruta)
+
+
+
+# Funcion que devuelve un Label con una imagen vacía de 10px
+# Recibe el frame/ventana en el que se desplegará
+def espacio(frame):
+    ruta_img = obtener_ruta()+"/Recursos/void.png"
+    img = tk.PhotoImage(file=ruta_img)
+    return tk.Label(frame,image=img)
+
+
+
+#Constantes
+col_texto = "#090909"
+col_celda = "#f0f0f0"
+col_celda_selec = "#c7ccf0"
+
