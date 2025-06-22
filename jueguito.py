@@ -24,13 +24,25 @@ def ventana_jugar():
         tablero[id][0].config(bg= uti.col_celda_selec)
         celda_actual[0] = id
     
+    def cargar_datos_partida():
+        pass
+
+    def cargar_partida():
+        partidas = uti.buscar_archivo("kakuro2025_partidas")
+        partida = partidas[0]
+        for clave in partida["claves"]:
+            i = clave["fila"] - 1
+            j = clave["columna"] - 1
+            #for k in range()
+            btn_act.bind('<Button 1>', lambda event, x=i,y=j: seleccionar_casilla( (str(x)+str(y)),celda_actual ))
+        pass
+
     def generar_tabla(frame):
         for i in range(0,9):
             for j in range(0,9):
                 tam = tam_casilla
                 pos_x = (tam + 2) * j + 2
                 pos_y = (tam + 2) * i + 2
-                frame_actual = tk.Frame(frame)
                 btn_act = tk.Button(
                     frame,
                     text="",
@@ -40,15 +52,12 @@ def ventana_jugar():
                     relief="flat",
                     command= ""
                 )
-                if i == j:
-                    frame_actual.config(bg="#677083")
-                    btn_act.config(bg="#677083",state="disabled")
+                btn_act.config(bg="#677083",state="disabled")
                 
 
-                #frame_actual.place(x=pos_x,y=pos_y,width=15,height=15)
-                btn_act.bind('<Button 1>', lambda event, x=i,y=j: seleccionar_casilla( (str(x)+str(y)),celda_actual ))
                 btn_act.place(x=pos_x,y=pos_y,width=tam,height=tam)
                 tablero[(str(i)+str(j))] = [btn_act, str(i)+str(j), 0]
+        cargar_partida()
 
     # Funcion que coloca un numero en la casilla
     # Recibe el número a colocar y el id de la casilla que se quiere marcar
@@ -60,11 +69,37 @@ def ventana_jugar():
         if num == "":
             tablero[id][2] = "0"
 
+    def iniciar_juego():
+        pass
+
+    def deshacer_jugada():
+        pass
+
+    def rehacer_jugada():
+        pass
+
+    def borrar_juego():
+        pass
+
+    def guardar_juego():
+        pass
+
+    def terminar_juego():
+        pass
+
+    def cargar_juego():
+        pass
+
+    def records():
+        pass
+
 
     # Esta función genera la interfaz
     def generar_interfaz():
         tam = tam_casilla
         pos_y = 2
+
+        # Genera los numeros para marcar en las casillas
         for i in range(0,9):
             pos_x = (tam + 2) * i + 2
             btn_act = tk.Button(
@@ -77,6 +112,7 @@ def ventana_jugar():
                     command= lambda num=i+1: marcar_casilla(num, celda_actual[0])
             )
             btn_act.place(x=pos_x,y=pos_y, width=tam, height=tam)
+        # Botón para Limpiar las casillas
         btn_limpiar = tk.Button(
                 frame_numeros,
                 text= "Limpiar",
@@ -87,6 +123,8 @@ def ventana_jugar():
                 command= lambda: marcar_casilla("", celda_actual[0])
         )
         btn_limpiar.place(x=2, y=pos_y + tam_casilla + tam_borde, width=tam_juego - 4, height=tam)
+
+
             
 
     celda_actual = [""]
@@ -101,6 +139,10 @@ def ventana_jugar():
 
     frame_numeros = tk.Frame(ventana,bg="#090909")
     frame_numeros.place(x=20, y=20 + tam_juego+ tam_casilla, width=tam_juego, height=tam_casilla * 2 + tam_borde * 3)
+
+    frame_usuario = tk.Frame(ventana,bg="#090909")
+    frame_usuario.place(x=20 + tam_juego + tam_casilla, y=20, width=tam_juego, height=tam_casilla)
+
     tablero={}
 
     

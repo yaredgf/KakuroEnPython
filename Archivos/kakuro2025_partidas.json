@@ -1,0 +1,18 @@
+[
+    {
+        "nivel_de_dificultad": "FÁCIL",
+        "partida": 1,
+        "claves": 
+        [
+            {
+                "tipo_de_clave" : "C",
+                "fila": 1,
+                "columna": 2,
+                "clave": 23,
+                "casillas" : 3 
+            }
+        ]
+        
+    }
+
+]
