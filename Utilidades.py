@@ -24,7 +24,6 @@ def obtener_ruta():
 # recibe el nombre del archivo json (sin la extensión)
 def buscar_archivo(nombre):
     ruta = obtener_ruta()
-    print(ruta)
     f = open(ruta+"/Archivos/"+nombre+".json", "r")
     archivo = f.read()
     f.close()

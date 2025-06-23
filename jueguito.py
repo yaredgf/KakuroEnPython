@@ -2,19 +2,18 @@ import Utilidades as uti
 import tkinter as tk
 from tkinter import messagebox as mb
 from tkinter import ttk 
+import collections 
 
+# Busca una partida en el archivo de partidas
+# Recibe la dificultad y el numero
+# Devuelve el diccionario correspondiente a la partida
+def buscar_partida(dif,num):
+    partidas = uti.buscar_archivo("kakuro2025_partidas")
+    for partida in partidas:
+        if partida["nivel_de_dificultad"] == dif and partida["partida"] == num:
+            return partida
 
 def ventana_jugar():
-    
-    def generar_columna(tree):
-        datos = []
-        for i in range(0,9):
-            datos.append( (i, i+i) )
-        print(datos)
-        for row in datos:
-            tree.insert('', tk.END, values=row)
-            #tree.bind('<Double 1>', activar_edicion)
-
 
     def seleccionar_casilla(id,celda_actual):
         #deseleccionar la actual
@@ -30,14 +29,9 @@ def ventana_jugar():
     # Carga las claves de la partida seleccionada
     # Recibe el frame qe contiene la cuadrícula del juego
     def cargar_claves(frame):
-        # Busca el archivo de partidas y lo obtiene
-        partidas = uti.buscar_archivo("kakuro2025_partidas")
-        # Toma la partida seleccionada
-        partida = partidas[0]
-
         tam = tam_casilla
         # Recorre las claves para ir colocandolas
-        for clave in partida["claves"]:
+        for clave in partida_actual["claves"]:
             # Obtiene la posición de la fila y columna de la clave
             i = clave["fila"] - 1
             j = clave["columna"] - 1
@@ -69,7 +63,7 @@ def ventana_jugar():
                 nuevo_i = i + (k * inc_i)
                 nuevo_j = j + (k * inc_j)
                 btn_act = tablero[(str(nuevo_i)+str(nuevo_j))]
-                btn_act[4].append( (clave["tipo_de_clave"],nuevo_i,nuevo_j) )
+                btn_act[4].append( (clave["tipo_de_clave"],i+1,j+1) )
                 btn_act[0].bind('<Button 1>', lambda event, x=nuevo_i,y=nuevo_j: seleccionar_casilla( (str(x)+str(y)),celda_actual ))
                 btn_act[0].config(bg=uti.col_celda, state="normal")
         
@@ -98,15 +92,64 @@ def ventana_jugar():
                 tablero[(str(i)+str(j))] = [btn_act, str(i)+str(j), 0, False, []]
         cargar_claves(frame)
 
+    # Valida la última jugada
+    # Recibe el identificador de la casilla que se modificó
+    # Devuelve un booleano que indica si es válida, y un mensaje de error en caso de que no
+    def validar_jugada(id):
+        for claves_celda in tablero[id][4]:
+            for claves in partida_actual["claves"]:
+                if claves["tipo_de_clave"] == claves_celda[0] and claves["fila"] == claves_celda[1] and claves["columna"] == claves_celda[2]:
+                    i = claves["fila"] - 1
+                    j = claves["columna"] - 1
+                    inc_i = 0
+                    inc_j = 0
+                    total = 0
+                    mensaje = ""
+                    if claves["tipo_de_clave"] == "C":
+                        inc_i = 1
+                        mensaje = "columna"
+                    else: 
+                        inc_j = 1
+                        mensaje = "fila"
+                    nums_usados = []
+                    for k in range(1,claves["casillas"]+1):
+                        nuevo_i = i + (k * inc_i)
+                        nuevo_j = j + (k * inc_j)
+                        nuevo_num = int( tablero[(str(nuevo_i)+str(nuevo_j))][2] )
+                        print(str(nuevo_i)+str(nuevo_j))
+                        if nuevo_num in nums_usados and nuevo_num != 0:
+                            return False, "Ya se ha usado el valor "+ str(nuevo_num) +" en la " + mensaje
+                        nums_usados.append(nuevo_num)
+                        total += nuevo_num
+                    if total > claves["clave"]:
+                        mensaje = "Se ha excedido el valor de la clave " + str(claves["clave"]) + "en la " + mensaje + ". La suma da " + str(total)
+                        return False, mensaje
+        return True, "Super bien todo"
+
+
+                    
+                    
+                    
+        
+
     # Funcion que coloca un numero en la casilla
     # Recibe el número a colocar y el id de la casilla que se quiere marcar
     def marcar_casilla(num,id):
+        # Si no hay casilla seleccionada se sale del proceso
         if id == "":
             return None
+        # Guarda el movimiento en la pila
+        pila_movimientos.append((id,tablero[id][2],num))
+        # Cambia el valor actual de la casilla por el nuevo
         tablero[id][0].config(text=num)
         tablero[id][2] = num
+        # Si la opción era limpiar, marca con cero
         if num == "":
             tablero[id][2] = "0"
+        # Valida la jugada y si no es posible, envia un mensaje de alerta
+        es_valida, mensaje = validar_jugada(id)
+        if not es_valida:
+            print(mensaje)
 
     def iniciar_juego():
         pass
@@ -163,9 +206,9 @@ def ventana_jugar():
         )
         btn_limpiar.place(x=2, y=pos_y + tam_casilla + tam_borde, width=tam_juego - 4, height=tam)
 
-
-            
-
+    # Guarda duplas (idcasilla,num anterior, nuevo num)
+    pila_movimientos = collections.deque()
+    partida_actual = buscar_partida("FACIL",1)
     celda_actual = [""]
     tam_casilla = 50
     tam_borde = 2
