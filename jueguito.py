@@ -24,18 +24,55 @@ def ventana_jugar():
         tablero[id][0].config(bg= uti.col_celda_selec)
         celda_actual[0] = id
     
-    def cargar_datos_partida():
+    def cargar_partida():
         pass
 
-    def cargar_partida():
+    # Carga las claves de la partida seleccionada
+    # Recibe el frame qe contiene la cuadrícula del juego
+    def cargar_claves(frame):
+        # Busca el archivo de partidas y lo obtiene
         partidas = uti.buscar_archivo("kakuro2025_partidas")
+        # Toma la partida seleccionada
         partida = partidas[0]
+
+        tam = tam_casilla
+        # Recorre las claves para ir colocandolas
         for clave in partida["claves"]:
+            # Obtiene la posición de la fila y columna de la clave
             i = clave["fila"] - 1
             j = clave["columna"] - 1
-            #for k in range()
-            btn_act.bind('<Button 1>', lambda event, x=i,y=j: seleccionar_casilla( (str(x)+str(y)),celda_actual ))
-        pass
+            # Calcula la posición en pixeles respecto al inicio del frame
+            pos_x = ((tam + 2) * j + 2) 
+            pos_y = ((tam + 2) * i + 2)
+            #Crea la linea (solo si aun no ha sido marcado como clave)
+            if not tablero[(str(i)+str(j))][3]:
+                linea = tk.Canvas(frame,bg=uti.col_celda_desact,)
+                linea.create_line(0,0,tam,tam,width=2,fill=uti.col_celda,)
+                linea.place(x=pos_x,y=pos_y,height=tam,width=tam)
+                tablero[(str(i)+str(j))][3] = True
+            # Ajusta el funcionamiento dependiendo de si es fila o columna
+            inc_i = 0
+            inc_j = 0
+            if clave["tipo_de_clave"] == "C":
+                pos_x += tam // 6
+                pos_y += ((2 * tam) // 3) - 1
+                inc_i = 1
+            else: 
+                pos_x += ((2 * tam) // 3) - 1
+                pos_y += tam // 6
+                inc_j = 1
+            # Agrega el label de la clave
+            lbl_clave = tk.Label(frame,text=str(clave["clave"]),bg=uti.col_celda_desact,fg=uti.col_celda)
+            lbl_clave.place(x=pos_x,y=pos_y,height=tam//3,width=tam//3)
+            # Activa las casillas de la clave
+            for k in range(1,clave["casillas"]+1):
+                nuevo_i = i + (k * inc_i)
+                nuevo_j = j + (k * inc_j)
+                btn_act = tablero[(str(nuevo_i)+str(nuevo_j))]
+                btn_act[4].append( (clave["tipo_de_clave"],nuevo_i,nuevo_j) )
+                btn_act[0].bind('<Button 1>', lambda event, x=nuevo_i,y=nuevo_j: seleccionar_casilla( (str(x)+str(y)),celda_actual ))
+                btn_act[0].config(bg=uti.col_celda, state="normal")
+        
 
     def generar_tabla(frame):
         for i in range(0,9):
@@ -52,12 +89,14 @@ def ventana_jugar():
                     relief="flat",
                     command= ""
                 )
-                btn_act.config(bg="#677083",state="disabled")
+                btn_act.config(bg=uti.col_celda_desact,state="disabled")
                 
 
                 btn_act.place(x=pos_x,y=pos_y,width=tam,height=tam)
-                tablero[(str(i)+str(j))] = [btn_act, str(i)+str(j), 0]
-        cargar_partida()
+                # tablero[00] = [[0]objeto_del_boton, [1]id, [2]valor_actual, 
+                # [3]es_clave?(Si/No), [4]lista de las casillas de las a las que pertenece (las guarda como duplas) ("C",0,3)]
+                tablero[(str(i)+str(j))] = [btn_act, str(i)+str(j), 0, False, []]
+        cargar_claves(frame)
 
     # Funcion que coloca un numero en la casilla
     # Recibe el número a colocar y el id de la casilla que se quiere marcar
@@ -134,7 +173,7 @@ def ventana_jugar():
     ventana = tk.Tk()
     ventana.geometry(str(tam_juego + 10)+"x"+str(tam_juego + 10))
 
-    frame_juego = tk.Frame(ventana,bg="#3E3E3E")
+    frame_juego = tk.Frame(ventana,bg=uti.col_borde)
     frame_juego.place(x=20, y=20, width=tam_juego, height=tam_juego)
 
     frame_numeros = tk.Frame(ventana,bg="#090909")

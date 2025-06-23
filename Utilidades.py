@@ -24,10 +24,11 @@ def obtener_ruta():
 # recibe el nombre del archivo json (sin la extensión)
 def buscar_archivo(nombre):
     ruta = obtener_ruta()
+    print(ruta)
     f = open(ruta+"/Archivos/"+nombre+".json", "r")
-    config = f.read()
+    archivo = f.read()
     f.close()
-    return json.loads(config)
+    return json.loads(archivo)
 
 def guardar_archivo(nombre, datos):
     # Guardar
@@ -87,4 +88,6 @@ def espacio(frame):
 col_texto = "#090909"
 col_celda = "#f0f0f0"
 col_celda_selec = "#c7ccf0"
+col_celda_desact ="#677083"
+col_borde= "#3E3E3E"
 

@@ -1,6 +1,6 @@
 [
     {
-        "nivel_de_dificultad": "FÁCIL",
+        "nivel_de_dificultad": "FACIL",
         "partida": 1,
         "claves": 
         [
@@ -10,7 +10,225 @@
                 "columna": 2,
                 "clave": 23,
                 "casillas" : 3 
+            },
+            {
+                "tipo_de_clave" : "C",
+                "fila": 1,
+                "columna": 3,
+                "clave": 21,
+                "casillas" : 3 
+            },
+            {
+                "tipo_de_clave" : "C",
+                "fila": 1,
+                "columna": 6,
+                "clave": 17,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "C",
+                "fila": 1,
+                "columna": 7,
+                "clave": 14,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "F",
+                "fila": 2,
+                "columna": 1,
+                "clave": 17,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "C",
+                "fila": 2,
+                "columna": 5,
+                "clave": 24,
+                "casillas" : 3 
+            },
+            {
+                "tipo_de_clave" : "F",
+                "fila": 2,
+                "columna": 5,
+                "clave": 17,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "C",
+                "fila": 2,
+                "columna": 8,
+                "clave": 7,
+                "casillas" : 3 
+            },
+            {
+                "tipo_de_clave" : "C",
+                "fila": 2,
+                "columna": 9,
+                "clave": 4,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "F",
+                "fila": 3,
+                "columna": 1,
+                "clave": 11,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "F",
+                "fila": 3,
+                "columna": 4,
+                "clave": 28,
+                "casillas" : 5 
+            },
+            {
+                "tipo_de_clave" : "C",
+                "fila": 3,
+                "columna": 4,
+                "clave": 23,
+                "casillas" : 3 
+            },
+            {
+                "tipo_de_clave" : "F",
+                "fila": 4,
+                "columna": 1,
+                "clave": 30,
+                "casillas" : 4 
+            },
+            {
+                "tipo_de_clave" : "F",
+                "fila": 4,
+                "columna": 7,
+                "clave": 4,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "C",
+                "fila": 4,
+                "columna": 7,
+                "clave": 6,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "C",
+                "fila": 5,
+                "columna": 3,
+                "clave": 23,
+                "casillas" : 3 
+            },
+            {
+                "tipo_de_clave" : "F",
+                "fila": 5,
+                "columna": 3,
+                "clave": 16,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "F",
+                "fila": 5,
+                "columna": 6,
+                "clave": 3,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "C",
+                "fila": 5,
+                "columna": 6,
+                "clave": 8,
+                "casillas" : 3 
+            },
+            {
+                "tipo_de_clave" : "C",
+                "fila": 6,
+                "columna": 2,
+                "clave": 17,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "F",
+                "fila": 6,
+                "columna": 2,
+                "clave": 17,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "F",
+                "fila": 6,
+                "columna": 5,
+                "clave": 3,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "C",
+                "fila": 6,
+                "columna": 8,
+                "clave": 14,
+                "casillas" : 3 
+            },
+            {
+                "tipo_de_clave" : "C",
+                "fila": 6,
+                "columna": 9,
+                "clave": 7,
+                "casillas" : 3 
+            },
+            {
+                "tipo_de_clave" : "F",
+                "fila": 7,
+                "columna": 1,
+                "clave": 17,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "C",
+                "fila": 7,
+                "columna": 4,
+                "clave": 16,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "C",
+                "fila": 7,
+                "columna": 5,
+                "clave": 17,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "F",
+                "fila": 7,
+                "columna": 5,
+                "clave": 10,
+                "casillas" : 4 
+            },
+            {
+                "tipo_de_clave" : "F",
+                "fila": 8,
+                "columna": 1,
+                "clave": 35,
+                "casillas" : 5 
+            },
+            {
+                "tipo_de_clave" : "F",
+                "fila": 8,
+                "columna": 7,
+                "clave": 13,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "F",
+                "fila": 9,
+                "columna": 3,
+                "clave": 17,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "F",
+                "fila": 9,
+                "columna": 7,
+                "clave": 3,
+                "casillas" : 2 
             }
+            
         ]
         
     }
