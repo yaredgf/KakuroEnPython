@@ -13,7 +13,7 @@ def buscar_partida(dif,num):
         if partida["nivel_de_dificultad"] == dif and partida["partida"] == num:
             return partida
 
-def ventana_jugar():
+def ventana_jugar(nombre):
 
     def seleccionar_casilla(id,celda_actual):
         #deseleccionar la actual
@@ -116,7 +116,6 @@ def ventana_jugar():
                         nuevo_i = i + (k * inc_i)
                         nuevo_j = j + (k * inc_j)
                         nuevo_num = int( tablero[(str(nuevo_i)+str(nuevo_j))][2] )
-                        print(str(nuevo_i)+str(nuevo_j))
                         if nuevo_num in nums_usados and nuevo_num != 0:
                             return False, "Ya se ha usado el valor "+ str(nuevo_num) +" en la " + mensaje
                         nums_usados.append(nuevo_num)
@@ -235,7 +234,7 @@ def ventana_jugar():
 
     ventana.mainloop() 
 
-def ventana_principal():
+def ventana_principal(nombre):
     # La ventana
     ventana = tk.Tk()
     ventana.title("Kakuro")
@@ -262,7 +261,7 @@ def ventana_principal():
         font=("Arial",18),
         bg="#f0f0f0",
         fg="#090909",
-        command= lambda: uti.abrir_ventana(ventana,lambda: ventana_jugar())
+        command= lambda: uti.abrir_ventana(ventana,lambda: ventana_jugar(nombre))
     )
     btn_jugar.grid(row=0,column=0,columnspan=2, padx=5,pady=5)
     
@@ -272,7 +271,7 @@ def ventana_principal():
         font=("Arial",12),
         bg="#f0f0f0",
         fg="#090909",
-        command= lambda: uti.abrir_ventana(ventana,lambda: ventana_jugar())
+        command= lambda: uti.abrir_ventana(ventana,lambda: ventana_jugar(nombre))
     )
     btn_configurar.grid(row=1,column=0,columnspan=2, padx=5,pady=5)
     
@@ -282,7 +281,7 @@ def ventana_principal():
         font=("Arial",12),
         bg="#f0f0f0",
         fg="#090909",
-        command= lambda: uti.abrir_ventana(ventana,lambda: ventana_jugar())
+        command= lambda: uti.abrir_ventana(ventana,lambda: ventana_jugar(nombre))
     )
     btn_ayuda.grid(row=0,column=0,columnspan=1, padx=5,pady=5)
 
@@ -292,7 +291,7 @@ def ventana_principal():
         font=("Arial",12),
         bg="#f0f0f0",
         fg="#090909",
-        command= lambda: uti.abrir_ventana(ventana,lambda: ventana_jugar())
+        command= lambda: uti.abrir_ventana(ventana,lambda: ventana_jugar(nombre))
     )
     btn_acerca_de.grid(row=0,column=1,columnspan=1, padx=5,pady=5)
 
@@ -309,4 +308,60 @@ def ventana_principal():
 
     ventana.mainloop()
 
-ventana_principal()
+# Es la ventana inicial, pide el nombre al usuario y lo valida antes de empezar
+def ventana_usuario():
+    def validar_nombre():
+        if nombre.get().strip() == "":
+            mb.showinfo("Error", "Nombre no adecuado")
+            return None
+
+        uti.abrir_ventana(ventana,lambda: ventana_principal(nombre.get()))
+        
+
+    ventana = tk.Tk()
+    frame = tk.Frame(ventana)
+    frame.grid(row=0,column=0,columnspan=1, padx=5,pady=5)
+    frame_opc = tk.Frame(ventana)
+    frame_opc.grid(row=0,column=1,columnspan=1, padx=5,pady=5)
+
+
+    ruta_img = uti.obtener_ruta()+"/Recursos/logo.png"
+    img = tk.PhotoImage(file=ruta_img)
+    label_img =tk.Label(frame,image=img)
+    label_img.grid(row=0,column=0,rowspan=1, padx=5,pady=5)
+
+    label = tk.Label(frame_opc,text="Ingrese su nombre de usuario:")
+    label.grid(row=0,column=0,columnspan=3, padx=5,pady=5)
+
+    nombre = tk.StringVar(ventana, value=str(""))
+    entry_nombre = tk.Entry(frame_opc)
+    entry_nombre.config(textvariable= nombre)
+    entry_nombre.grid(row=1,column=0,columnspan=2, padx=5,pady=5)
+
+    btn_ingresar = tk.Button(
+        frame_opc,
+        text="Ingresar",
+        font=("Arial",12),
+        bg=uti.col_celda_selec,
+        fg="#090909",
+        relief="flat",
+        command= validar_nombre
+    )
+    btn_ingresar.grid(row=1,column=2,columnspan=1, padx=5,pady=5)
+
+    btn_salir = tk.Button(
+        frame_opc,
+        text="Salir",
+        font=("Arial",12),
+        bg="#f0f0f0",
+        fg="#090909",
+        relief="flat",
+        command= lambda: ventana.destroy()
+    )
+    btn_salir.grid(row=2,column=0,columnspan=3, padx=5,pady=5)
+
+    ventana.mainloop()
+
+
+#ventana_principal()
+ventana_usuario()
