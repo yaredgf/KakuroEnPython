@@ -1,4 +1,10 @@
 # Changelog
+## v0.2.0
+    * Se agregaron los datos del usuario en la interfaz 
+    * Se agregó el cronómetro por medio de threading
+    * Se ajustó el tamaño de la pantalla del juego
+    * Se hicieron cambios de interfaz en la ventana de poner nombre
+    
 ## v0.1.5.1
     * Se agregó changelog (no sabía que era pero ahora ya sé 💪)
     

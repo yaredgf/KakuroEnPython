@@ -3,6 +3,8 @@ import tkinter as tk
 from tkinter import messagebox as mb
 from tkinter import ttk 
 import collections 
+import time
+import threading as th
 
 # Busca una partida en el archivo de partidas
 # Recibe la dificultad y el numero
@@ -14,6 +16,13 @@ def buscar_partida(dif,num):
             return partida
 
 def ventana_jugar(nombre):
+    # Funcion para hacer el contador de tiempo
+    def temporizador(tiempo_partida):
+        time.sleep(1)
+        tiempo_partida[0] += contar_al_tiempo
+        tiempo_partida[1].config(text=time.strftime("%H:%M:%S",time.gmtime(tiempo_partida[0])))
+        if estado_partida:
+            temporizador(tiempo_partida)
 
     def seleccionar_casilla(id,celda_actual):
         #deseleccionar la actual
@@ -174,6 +183,18 @@ def ventana_jugar(nombre):
     def records():
         pass
 
+    # Esta funcion genera la interfaz que tiene que ver con el usuario
+    def generar_interfaz_usuario():
+        label_nombre = tk.Label(frame_usuario,text=nombre,bg=uti.col_celda_desact,fg=uti.col_celda,font=("Arial",14))
+        label_nombre.place(x=tam_borde,y=tam_borde,width=(tam_juego/2)-tam_borde,height=tam_casilla-(tam_borde*2))
+        
+        label_tiempo = tk.Label(frame_usuario,text=time.strftime("%H:%M:%S",time.gmtime(tiempo_partida[0])),
+                                bg=uti.col_celda_desact,fg=uti.col_celda,font=("Arial",16))
+        label_tiempo.place(x=tam_borde+(tam_juego/2),y=tam_borde,width=(tam_juego/2)-tam_borde*2,height=tam_casilla-(tam_borde*2))
+        tiempo_partida.append(label_tiempo)
+        pass
+
+    #nombre
 
     # Esta función genera la interfaz
     def generar_interfaz():
@@ -204,24 +225,33 @@ def ventana_jugar(nombre):
                 command= lambda: marcar_casilla("", celda_actual[0])
         )
         btn_limpiar.place(x=2, y=pos_y + tam_casilla + tam_borde, width=tam_juego - 4, height=tam)
+        generar_interfaz_usuario()
 
     # Guarda duplas (idcasilla,num anterior, nuevo num)
     pila_movimientos = collections.deque()
+    es_temporizador = False
+
+    contar_al_tiempo = 1
+    if es_temporizador:
+        contar_al_tiempo = -1
+
+    estado_partida = True
+    tiempo_partida = [0]
     partida_actual = buscar_partida("FACIL",1)
     celda_actual = [""]
     tam_casilla = 50
     tam_borde = 2
     tam_juego = (tam_casilla + tam_borde) * 9 + tam_borde
     ventana = tk.Tk()
-    ventana.geometry(str(tam_juego + 10)+"x"+str(tam_juego + 10))
+    ventana.geometry(str((tam_juego * 2) + 40 + tam_casilla)+"x"+str(tam_juego + (tam_casilla * 3) + 40))
 
     frame_juego = tk.Frame(ventana,bg=uti.col_borde)
     frame_juego.place(x=20, y=20, width=tam_juego, height=tam_juego)
 
-    frame_numeros = tk.Frame(ventana,bg="#090909")
+    frame_numeros = tk.Frame(ventana,bg=uti.col_borde)
     frame_numeros.place(x=20, y=20 + tam_juego+ tam_casilla, width=tam_juego, height=tam_casilla * 2 + tam_borde * 3)
 
-    frame_usuario = tk.Frame(ventana,bg="#090909")
+    frame_usuario = tk.Frame(ventana,bg=uti.col_borde)
     frame_usuario.place(x=20 + tam_juego + tam_casilla, y=20, width=tam_juego, height=tam_casilla)
 
     tablero={}
@@ -231,7 +261,8 @@ def ventana_jugar(nombre):
     generar_interfaz()
     print(tablero)
 
-
+    t1 = th.Thread(target=lambda:temporizador(tiempo_partida))
+    t1.start()
     ventana.mainloop() 
 
 def ventana_principal(nombre):
@@ -341,9 +372,9 @@ def ventana_usuario():
     btn_ingresar = tk.Button(
         frame_opc,
         text="Ingresar",
-        font=("Arial",12),
+        font=("Arial",14),
         bg=uti.col_celda_selec,
-        fg="#090909",
+        fg=uti.col_borde,
         relief="flat",
         command= validar_nombre
     )
@@ -353,8 +384,8 @@ def ventana_usuario():
         frame_opc,
         text="Salir",
         font=("Arial",12),
-        bg="#f0f0f0",
-        fg="#090909",
+        bg=uti.col_celda_desact,
+        fg=uti.col_celda,
         relief="flat",
         command= lambda: ventana.destroy()
     )
