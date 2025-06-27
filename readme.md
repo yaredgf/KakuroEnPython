@@ -1,4 +1,9 @@
 # Changelog
+## v0.2.1
+    * Se agregaron las opciones a la interfaz de juego
+    * Se añadió la función de deshacer
+    * Se añadió la función de rehacer
+    
 ## v0.2.0
     * Se agregaron los datos del usuario en la interfaz 
     * Se agregó el cronómetro por medio de threading

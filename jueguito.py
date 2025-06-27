@@ -141,15 +141,19 @@ def ventana_jugar(nombre):
         
 
     # Funcion que coloca un numero en la casilla
-    # Recibe el número a colocar y el id de la casilla que se quiere marcar
-    def marcar_casilla(num,id):
+    # Recibe el número a colocar y el id de la casilla que se quiere marcar, 
+    # también un booleano que indica si es deshacer/rehacer
+    def marcar_casilla(num,id,es_deshacer):
         # Si no hay casilla seleccionada se sale del proceso
         if id == "":
             return None
-        # Guarda el movimiento en la pila
-        pila_movimientos.append((id,tablero[id][2],num))
+        # Guarda el movimiento en la pila (solo si no es un desacer/rehacer)
+        if not es_deshacer:
+            pila_movimientos.append((id,tablero[id][2],num))
         # Cambia el valor actual de la casilla por el nuevo
         tablero[id][0].config(text=num)
+        if num == 0:
+            tablero[id][0].config(text="")
         tablero[id][2] = num
         # Si la opción era limpiar, marca con cero
         if num == "":
@@ -159,14 +163,26 @@ def ventana_jugar(nombre):
         if not es_valida:
             print(mensaje)
 
-    def iniciar_juego():
+    def pausa():
         pass
 
     def deshacer_jugada():
-        pass
-
+        # (idcasilla,num anterior, nuevo num)
+        # ultimo_mov = um
+        if len(pila_movimientos) < 1:
+            return None
+        um = pila_movimientos.pop()
+        marcar_casilla(um[1],um[0],True)
+        pila_rehacer.append(um)
+        
     def rehacer_jugada():
-        pass
+        # (idcasilla,num anterior, nuevo num)
+        # ultimo_des = ud
+        if len(pila_rehacer) < 1:
+            return None
+        ud = pila_rehacer.pop()
+        marcar_casilla(ud[2],ud[0],True)
+        pila_movimientos.append(ud)
 
     def borrar_juego():
         pass
@@ -183,6 +199,46 @@ def ventana_jugar(nombre):
     def records():
         pass
 
+    # Esta función agrega los botones de opciones de la interfaz
+    def generar_interfaz_opciones():
+        tam_opc = (tam_juego-tam_borde*4)//3
+        btn_pausa = tk.Button(frame_opciones,bg=uti.col_celda,fg=uti.col_borde,font=("Arial",14),relief="flat")
+        btn_pausa.config(text="Cortis",command=pausa)
+        btn_pausa.place(x=tam_borde,y=tam_borde,height=tam_casilla,width=tam_juego-tam_borde*2)
+
+        # Deshacer
+        btn_deshacer = tk.Button(frame_opciones,bg=uti.col_celda,fg=uti.col_borde,font=("Arial",14),relief="flat")
+        btn_deshacer.config(text="Deshacer",command=deshacer_jugada)
+        btn_deshacer.place(x=tam_borde,y=tam_borde*2+tam_casilla,height=tam_casilla,width=tam_opc)
+ 
+        # Rehacer
+        btn_rehacer = tk.Button(frame_opciones,bg=uti.col_celda,fg=uti.col_borde,font=("Arial",14),relief="flat")
+        btn_rehacer.config(text="Rehacer",command=rehacer_jugada)
+        btn_rehacer.place(x=tam_borde*2+tam_opc,y=tam_borde*2+tam_casilla,height=tam_casilla,width=tam_opc)
+ 
+        # Guardar 
+        btn_guardar = tk.Button(frame_opciones,bg=uti.col_celda,fg=uti.col_borde,font=("Arial",14),relief="flat")
+        btn_guardar.config(text="Guardar",command=guardar_juego)
+        btn_guardar.place(x=tam_borde*3+tam_opc*2,y=tam_borde*2+tam_casilla,height=tam_casilla,width=tam_opc)
+ 
+
+        # Borrar 
+        btn_borrar_juego = tk.Button(frame_opciones,bg=uti.col_celda,fg=uti.col_borde,font=("Arial",14),relief="flat")
+        btn_borrar_juego.config(text="Borrar",command=borrar_juego)
+        btn_borrar_juego.place(x=tam_borde,y=tam_borde*3+tam_casilla*2,height=tam_casilla,width=tam_opc)
+ 
+        # Terminar 
+        btn_terminar = tk.Button(frame_opciones,bg=uti.col_celda,fg=uti.col_borde,font=("Arial",14),relief="flat")
+        btn_terminar.config(text="Terminar",command=terminar_juego)
+        btn_terminar.place(x=tam_borde*2+tam_opc,y=tam_borde*3+tam_casilla*2,height=tam_casilla,width=tam_opc)
+ 
+        # Records
+        btn_records = tk.Button(frame_opciones,bg=uti.col_celda,fg=uti.col_borde,font=("Arial",14),relief="flat")
+        btn_records.config(text="Records",command=records)
+        btn_records.place(x=tam_borde*3+tam_opc*2,y=tam_borde*3+tam_casilla*2,height=tam_casilla,width=tam_opc)
+        pass
+    
+
     # Esta funcion genera la interfaz que tiene que ver con el usuario
     def generar_interfaz_usuario():
         label_nombre = tk.Label(frame_usuario,text=nombre,bg=uti.col_celda_desact,fg=uti.col_celda,font=("Arial",14))
@@ -192,12 +248,9 @@ def ventana_jugar(nombre):
                                 bg=uti.col_celda_desact,fg=uti.col_celda,font=("Arial",16))
         label_tiempo.place(x=tam_borde+(tam_juego/2),y=tam_borde,width=(tam_juego/2)-tam_borde*2,height=tam_casilla-(tam_borde*2))
         tiempo_partida.append(label_tiempo)
-        pass
 
-    #nombre
-
-    # Esta función genera la interfaz
-    def generar_interfaz():
+    # Esta función agrega los botones para jugar
+    def generar_interfaz_botones():
         tam = tam_casilla
         pos_y = 2
 
@@ -211,7 +264,7 @@ def ventana_jugar(nombre):
                     bg=uti.col_celda,
                     fg= uti.col_texto,
                     relief="flat",
-                    command= lambda num=i+1: marcar_casilla(num, celda_actual[0])
+                    command= lambda num=i+1: marcar_casilla(num, celda_actual[0],False)
             )
             btn_act.place(x=pos_x,y=pos_y, width=tam, height=tam)
         # Botón para Limpiar las casillas
@@ -222,13 +275,21 @@ def ventana_jugar(nombre):
                 bg=uti.col_celda,
                 fg= uti.col_texto,
                 relief="flat",
-                command= lambda: marcar_casilla("", celda_actual[0])
+                command= lambda: marcar_casilla("", celda_actual[0],False)
         )
         btn_limpiar.place(x=2, y=pos_y + tam_casilla + tam_borde, width=tam_juego - 4, height=tam)
+
+    # Esta función genera la interfaz
+    def generar_interfaz():
+        generar_tabla(frame_juego)
+        generar_interfaz_botones()
         generar_interfaz_usuario()
+        generar_interfaz_opciones()
+
 
     # Guarda duplas (idcasilla,num anterior, nuevo num)
     pila_movimientos = collections.deque()
+    pila_rehacer = collections.deque()
     es_temporizador = False
 
     contar_al_tiempo = 1
@@ -252,17 +313,20 @@ def ventana_jugar(nombre):
     frame_numeros.place(x=20, y=20 + tam_juego+ tam_casilla, width=tam_juego, height=tam_casilla * 2 + tam_borde * 3)
 
     frame_usuario = tk.Frame(ventana,bg=uti.col_borde)
-    frame_usuario.place(x=20 + tam_juego + tam_casilla, y=20, width=tam_juego, height=tam_casilla)
+    frame_usuario.place(x=20 + tam_juego + tam_casilla, y=20, width=tam_juego, height=tam_casilla+1)
+    
+    frame_opciones = tk.Frame(ventana,bg=uti.col_borde)
+    frame_opciones.place(x=20 + tam_juego + tam_casilla, y=20 + (tam_casilla*2), width=tam_juego, height=(tam_casilla+2)*3 + 2)
 
     tablero={}
 
-    
-    generar_tabla(frame_juego)
+    # Llama a la función que genera la interfaz
     generar_interfaz()
-    print(tablero)
 
+    # Pone a funcionar el cronómetro
     t1 = th.Thread(target=lambda:temporizador(tiempo_partida))
     t1.start()
+
     ventana.mainloop() 
 
 def ventana_principal(nombre):
