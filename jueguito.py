@@ -75,6 +75,9 @@ def ventana_jugar(nombre):
                 btn_act[4].append( (clave["tipo_de_clave"],i+1,j+1) )
                 btn_act[0].bind('<Button 1>', lambda event, x=nuevo_i,y=nuevo_j: seleccionar_casilla( (str(x)+str(y)),celda_actual ))
                 btn_act[0].config(bg=uti.col_celda, state="normal")
+                # Celda que debe ser guardada
+                if not (str(nuevo_i)+str(nuevo_j),0) in celdas_jugables:
+                    celdas_jugables.append((str(nuevo_i)+str(nuevo_j),0))
         
 
     def generar_tabla(frame):
@@ -185,7 +188,12 @@ def ventana_jugar(nombre):
         pila_movimientos.append(ud)
 
     def borrar_juego():
-        pass
+        seleccion = mb.askquestion("Borrar juego","¿Está seguro de que desea borrar la partida? Perderá su progreso")
+        if seleccion == 'yes':
+            pila_movimientos.clear()
+            pila_rehacer.clear()
+            for celdas in celdas_jugables:
+                marcar_casilla(0,celdas[0],True)
 
     def guardar_juego():
         pass
@@ -291,10 +299,14 @@ def ventana_jugar(nombre):
     pila_movimientos = collections.deque()
     pila_rehacer = collections.deque()
     es_temporizador = False
+    # Aquí se guardan las casillas que tienen datos
+    celdas_jugables = []
 
     contar_al_tiempo = 1
     if es_temporizador:
         contar_al_tiempo = -1
+    
+
 
     estado_partida = True
     tiempo_partida = [0]
@@ -326,8 +338,15 @@ def ventana_jugar(nombre):
     # Pone a funcionar el cronómetro
     t1 = th.Thread(target=lambda:temporizador(tiempo_partida))
     t1.start()
-
+    print( celdas_jugables)
     ventana.mainloop() 
+
+def ventana_configuracion(nombre):
+    ventana = tk.Tk()
+    ventana.title("Kakuro - Configuración")
+
+    ventana.mainloop()
+    pass
 
 def ventana_principal(nombre):
     # La ventana
@@ -366,7 +385,7 @@ def ventana_principal(nombre):
         font=("Arial",12),
         bg="#f0f0f0",
         fg="#090909",
-        command= lambda: uti.abrir_ventana(ventana,lambda: ventana_jugar(nombre))
+        command= lambda: uti.abrir_ventana(ventana,lambda: ventana_configuracion(nombre))
     )
     btn_configurar.grid(row=1,column=0,columnspan=2, padx=5,pady=5)
     

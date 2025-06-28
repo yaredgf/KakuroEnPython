@@ -1,4 +1,7 @@
 # Changelog
+## v0.2.2
+    * Se agregó la función de borrar juego y se empezó la ventana de configuración
+
 ## v0.2.1
     * Se agregaron las opciones a la interfaz de juego
     * Se añadió la función de deshacer
