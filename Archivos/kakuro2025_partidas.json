@@ -231,6 +231,27 @@
             
         ]
         
+    },
+    {
+        "nivel_de_dificultad": "EXPERTO",
+        "partida": 1,
+        "claves": 
+        [
+            {
+                "tipo_de_clave" : "F",
+                "fila": 9,
+                "columna": 7,
+                "clave": 3,
+                "casillas" : 2 
+            },
+            {
+                "tipo_de_clave" : "C",
+                "fila": 1,
+                "columna": 2,
+                "clave": 4,
+                "casillas" : 2 
+            }
+        ]
     }
 
 ]

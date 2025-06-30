@@ -81,6 +81,14 @@ def espacio(frame):
     img = tk.PhotoImage(file=ruta_img)
     return tk.Label(frame,image=img)
 
+# Funcion que centra la ventana
+def centrar_ventana(ventana,largo,alto):
+    wtotal = ventana.winfo_screenwidth()
+    htotal = ventana.winfo_screenheight()
+    pwidth = round(wtotal/2-largo/2)
+    pheight = round(htotal/2-alto/2)    
+    ventana.geometry(str(largo)+"x"+str(alto)+"+"+str(pwidth)+"+"+str(pheight))
+
 
 
 #Constantes

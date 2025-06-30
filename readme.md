@@ -1,4 +1,13 @@
 # Changelog
+## v0.3.0 (Aun sin subir)
+    * Se agregó por completo la función configuración
+    * Se agregó la función de guardar partida
+    * Se agregó la función de cargar partida
+    * Se agregó la función de terminar partida
+    * Se agregó la función de temporizador
+    * Se agregó la validación de victoria/completado
+    * Se empezó el módulo de records
+
 ## v0.2.2
     * Se agregó la función de borrar juego y se empezó la ventana de configuración
 
