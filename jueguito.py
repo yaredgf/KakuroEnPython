@@ -17,73 +17,139 @@ def buscar_partida(dif,num):
             return partida
 
 def guardar_record(nombre,tiempo,dificultad,num_partida):
-    pass
+    encontrado = False
+    records = uti.buscar_archivo("kakuro2025_records")
+    for record in records:
+        if record["nombre"] == nombre and record["dificultad"] == dificultad and record["num_partida"] == num_partida:
+            encontrado = True 
+            if record["tiempo"] > tiempo:
+                record["tiempo"] = tiempo
+                break
+    if not encontrado:
+        record = {"nombre":nombre,"tiempo":tiempo,"dificultad":dificultad,"num_partida":num_partida}
+        records.append(record)
+    uti.guardar_archivo("kakuro2025_records",records)
 
 def ventana_records(nombre):
+    def ordenar_la_lista(lista):
+        tam = len(lista)
+        for i in range(tam-1):
+            for j in range(1,tam):
+                if lista[i][1] > lista[j][1]:
+                    de_paso = lista[j]
+                    lista[j] = lista[i]
+                    lista[i] = de_paso
+
+    
     def generar_datos():
+        seleccion_actual.clear()
+        personales.clear()
         for record in records:
-            pass
+            fila = (record["nombre"],record["tiempo"],record["dificultad"],record["num_partida"])
+            if fila[2] != dificultad[0] and dificultad[0] != "TODOS":
+                continue
+            seleccion_actual.append(fila)
+            if nombre == record["nombre"]:
+                personales.append(fila)
+        ordenar_la_lista(seleccion_actual)
+        ordenar_la_lista(personales)
+
+    def construir_tabla():
+        tablas[0].destroy() 
+        tablas[0] = ttk.Treeview(frame_tree_globales, columns=columnas, show='headings', selectmode=tk.BROWSE)
+        tablas[1].destroy() 
+        tablas[1] = ttk.Treeview(frame_personales, columns=columnas, show='headings', selectmode=tk.BROWSE)
+        for tree in tablas:
+            for columna in columnas:
+                tree.heading(columna, text=columna)
+        tablas[0].grid(row=0, column=0, padx= 5, pady= 5)
+        tablas[1].grid(row=1, column=0, columnspan=5, padx= 5, pady= 5)
 
     def generar_tabla():
+        for row in seleccion_actual:
+            tablas[0].insert('', tk.END, values=row)
+        for row in personales:
+            tablas[1].insert('', tk.END, values=row)
         pass
 
     # Vuelve a la ventana que lo llamó
     def salir():
-        guardar = mb.askquestion("Salir","¿Desea volver?")
-        if guardar == 'yes':
-            uti.abrir_ventana(ventana,lambda: ventana_principal(nombre))
+        uti.abrir_ventana(ventana,lambda: ventana_principal(nombre))
 
-    def cambiar_dificultades(dificultad):
-        btn_todos.config(bg=uti.col_celda)
-        btn_facil.config(bg=uti.col_celda)
-        btn_medio.config(bg=uti.col_celda)
-        btn_dificil.config(bg=uti.col_celda)
-        btn_experto.config(bg=uti.col_celda)
-        match dificultad:
+    def cambiar_dificultades(nueva_dificultad):
+        btn_todos.config(bg=uti.col_borde,fg=uti.col_celda)
+        btn_facil.config(bg=uti.col_borde,fg=uti.col_celda)
+        btn_medio.config(bg=uti.col_borde,fg=uti.col_celda)
+        btn_dificil.config(bg=uti.col_borde,fg=uti.col_celda)
+        btn_experto.config(bg=uti.col_borde,fg=uti.col_celda)
+        match nueva_dificultad:
             case "TODOS":
-                btn_todos.config(bg=uti.col_celda_selec)
+                btn_todos.config(bg=uti.col_celda_selec,fg=uti.col_borde)
             case "FACIL":
-                btn_facil.config(bg=uti.col_celda_selec)
+                btn_facil.config(bg=uti.col_celda_selec,fg=uti.col_borde)
             case "MEDIO":
-                btn_medio.config(bg=uti.col_celda_selec)
+                btn_medio.config(bg=uti.col_celda_selec,fg=uti.col_borde)
             case "DIFICIL":
-                btn_dificil.config(bg=uti.col_celda_selec)
+                btn_dificil.config(bg=uti.col_celda_selec,fg=uti.col_borde)
             case "EXPERTO":
-                btn_experto.config(bg=uti.col_celda_selec)
+                btn_experto.config(bg=uti.col_celda_selec,fg=uti.col_borde)
+        dificultad[0]=nueva_dificultad
+        construir_tabla()
+        generar_datos()
+        generar_tabla()
+
 
     #records que se muestran
 
     ventana = tk.Tk()
     tk.Label(ventana,fg=uti.col_borde,font=("Arial",16),text="Records Globales").grid(column=0,row=0,padx=5,pady=5)
-    tk.Label(ventana,fg=uti.col_borde,font=("Arial",16),text="Records Personales").grid(column=1,row=0,padx=5,pady=5)
-    frame_globales = tk.Frame(ventana,bg=uti.col_borde)
-    frame_globales.grid(column=0,row=1,padx=5,pady=5)
+    tk.Label(ventana,fg=uti.col_borde,font=("Arial",16),text="Records Personales").grid(column=0,row=2,padx=5,pady=5)
+    frame_globales = tk.Frame(ventana)
+    frame_globales.grid(column=0,row=1,padx=0,pady=0)
+    frame_tree_globales = tk.Frame(frame_globales,bg=uti.col_borde)
+    frame_tree_globales.grid(row=1, column=0, columnspan=5, padx= 5, pady= 5)
     frame_personales = tk.Frame(ventana,bg=uti.col_borde)
-    frame_personales.grid(column=1,row=1,padx=5,pady=5)
+    frame_personales.grid(column=0,row=3,padx=5,pady=5)
 
-    btn_todos = tk.Button(frame_globales,text="Todos",font=("Arial",12),bg=uti.col_celda,fg=uti.col_texto)
+    btn_todos = tk.Button(frame_globales,text="Todos",font=("Arial",12),bg=uti.col_celda_selec,fg=uti.col_borde)
     btn_todos.config(relief="flat",command=lambda: cambiar_dificultades("TODOS") )
     btn_todos.grid(column=0,row=0,padx=5,pady=5)
     
-    btn_facil = tk.Button(frame_globales,text="Fácil",font=("Arial",12),bg=uti.col_celda,fg=uti.col_texto)
+    btn_facil = tk.Button(frame_globales,text="Fácil",font=("Arial",12),bg=uti.col_borde,fg=uti.col_celda)
     btn_facil.config(relief="flat",command=lambda: cambiar_dificultades("FACIL") )
     btn_facil.grid(column=1,row=0,padx=5,pady=5)
     
-    btn_medio = tk.Button(frame_globales,text="Medio",font=("Arial",12),bg=uti.col_celda,fg=uti.col_texto)
+    btn_medio = tk.Button(frame_globales,text="Medio",font=("Arial",12),bg=uti.col_borde,fg=uti.col_celda)
     btn_medio.config(relief="flat",command=lambda: cambiar_dificultades("MEDIO") )
     btn_medio.grid(column=2,row=0,padx=5,pady=5)
     
-    btn_dificil = tk.Button(frame_globales,text="Difícil",font=("Arial",12),bg=uti.col_celda,fg=uti.col_texto)
+    btn_dificil = tk.Button(frame_globales,text="Difícil",font=("Arial",12),bg=uti.col_borde,fg=uti.col_celda)
     btn_dificil.config(relief="flat",command=lambda: cambiar_dificultades("DIFICIL") )
     btn_dificil.grid(column=3,row=0,padx=5,pady=5)
     
-    btn_experto = tk.Button(frame_globales,text="Experto",font=("Arial",12),bg=uti.col_celda,fg=uti.col_texto)
+    btn_experto = tk.Button(frame_globales,text="Experto",font=("Arial",12),bg=uti.col_borde,fg=uti.col_celda)
     btn_experto.config(relief="flat",command=lambda: cambiar_dificultades("EXPERTO") )
     btn_experto.grid(column=4,row=0,padx=5,pady=5)
 
-    records = uti.buscar_archivo("kakuro2025_records")
-    dificultad = "TODOS"
+    btn_volver = tk.Button(ventana,text="Volver",font=("Arial",12),bg=uti.col_borde,fg=uti.col_celda)
+    btn_volver.config(relief="flat",command=lambda: salir() )
+    btn_volver.grid(column=0,row=4,padx=5,pady=5)
 
+    records = uti.buscar_archivo("kakuro2025_records")
+    seleccion_actual = []
+    personales = []
+    dificultad = ["TODOS"]
+    
+    columnas = ('Nombre','Tiempo','Dificultad','Número de la partida')
+    tree_globales = ttk.Treeview(frame_tree_globales, columns=columnas, show='headings', selectmode=tk.BROWSE)
+    tree_personales = ttk.Treeview(frame_personales, columns=columnas, show='headings', selectmode=tk.BROWSE)
+    tablas = [tree_globales,tree_personales]
+    construir_tabla
+    generar_datos()
+    generar_tabla()
+    tree_globales.grid(row=0, column=0, padx= 5, pady= 5)
+
+    tree_personales.grid(row=1, column=0, columnspan=5, padx= 5, pady= 5)
 
 
 
@@ -174,7 +240,7 @@ def ventana_jugar(nombre,se_debe_cargar):
                         nums_usados.append(nuevo_num)
                         total += nuevo_num
                     if total > claves["clave"]:
-                        mensaje = "Se ha excedido el valor de la clave " + str(claves["clave"]) + "en la " + mensaje + ". La suma da " + str(total)
+                        mensaje = "Se ha excedido el valor de la clave " + str(claves["clave"]) + " en la " + mensaje + ". La suma da " + str(total)
                         return False, mensaje
                     if para_victoria and total != claves["clave"]:
                         return False, "Suma no es igual a la clave"
@@ -228,7 +294,7 @@ def ventana_jugar(nombre,se_debe_cargar):
         # Valida la jugada y si no es posible, envia un mensaje de alerta
         es_valida, mensaje = validar_jugada(tablero[id][4],False)
         if not es_valida:
-            print(mensaje)
+            label_mensajes.config(text=mensaje)
             return None
         validar_victoria()
 
@@ -260,6 +326,7 @@ def ventana_jugar(nombre,se_debe_cargar):
             pila_rehacer.clear()
             for celdas in celdas_jugables:
                 marcar_casilla(0,celdas[0],True)
+            label_mensajes.config(text="Aquí verá cualquier alerta")
 
     # Guarda los datos del juego actual a nombre de [nombre de usuario]. 
     # Esto lo hace en el archivo de partidas actuales
@@ -370,40 +437,37 @@ def ventana_jugar(nombre,se_debe_cargar):
     # Esta función agrega los botones de opciones de la interfaz
     def generar_interfaz_opciones():
         tam_opc = (tam_juego-tam_borde*4)//3
-        btn_pausa = tk.Button(frame_opciones,bg=uti.col_celda,fg=uti.col_borde,font=("Arial",14),relief="flat")
-        btn_pausa.config(text="Cortis",command=pausa)
-        btn_pausa.place(x=tam_borde,y=tam_borde,height=tam_casilla,width=tam_juego-tam_borde*2)
 
         # Deshacer
         btn_deshacer = tk.Button(frame_opciones,bg=uti.col_celda,fg=uti.col_borde,font=("Arial",14),relief="flat")
         btn_deshacer.config(text="Deshacer",command=deshacer_jugada)
-        btn_deshacer.place(x=tam_borde,y=tam_borde*2+tam_casilla,height=tam_casilla,width=tam_opc)
+        btn_deshacer.place(x=tam_borde,y=tam_borde,height=tam_casilla,width=tam_opc)
  
         # Rehacer
         btn_rehacer = tk.Button(frame_opciones,bg=uti.col_celda,fg=uti.col_borde,font=("Arial",14),relief="flat")
         btn_rehacer.config(text="Rehacer",command=rehacer_jugada)
-        btn_rehacer.place(x=tam_borde*2+tam_opc,y=tam_borde*2+tam_casilla,height=tam_casilla,width=tam_opc)
+        btn_rehacer.place(x=tam_borde*2+tam_opc,y=tam_borde,height=tam_casilla,width=tam_opc)
  
         # Guardar 
         btn_guardar = tk.Button(frame_opciones,bg=uti.col_celda,fg=uti.col_borde,font=("Arial",14),relief="flat")
         btn_guardar.config(text="Guardar",command=guardar_juego)
-        btn_guardar.place(x=tam_borde*3+tam_opc*2,y=tam_borde*2+tam_casilla,height=tam_casilla,width=tam_opc)
+        btn_guardar.place(x=tam_borde*3+tam_opc*2,y=tam_borde,height=tam_casilla,width=tam_opc)
  
 
         # Borrar 
         btn_borrar_juego = tk.Button(frame_opciones,bg=uti.col_celda,fg=uti.col_borde,font=("Arial",14),relief="flat")
         btn_borrar_juego.config(text="Borrar",command=borrar_juego)
-        btn_borrar_juego.place(x=tam_borde,y=tam_borde*3+tam_casilla*2,height=tam_casilla,width=tam_opc)
+        btn_borrar_juego.place(x=tam_borde,y=tam_borde*2+tam_casilla,height=tam_casilla,width=tam_opc)
  
         # Terminar 
         btn_terminar = tk.Button(frame_opciones,bg=uti.col_celda,fg=uti.col_borde,font=("Arial",14),relief="flat")
         btn_terminar.config(text="Terminar",command=terminar_juego)
-        btn_terminar.place(x=tam_borde*2+tam_opc,y=tam_borde*3+tam_casilla*2,height=tam_casilla,width=tam_opc)
+        btn_terminar.place(x=tam_borde*2+tam_opc,y=tam_borde*2+tam_casilla,height=tam_casilla,width=tam_opc)
  
         # Records
-        btn_records = tk.Button(frame_opciones,bg=uti.col_celda,fg=uti.col_borde,font=("Arial",14),relief="flat")
-        btn_records.config(text="Records",command=records)
-        btn_records.place(x=tam_borde*3+tam_opc*2,y=tam_borde*3+tam_casilla*2,height=tam_casilla,width=tam_opc)
+        btn_cortis = tk.Button(frame_opciones,bg=uti.col_celda,fg=uti.col_borde,font=("Arial",14),relief="flat")
+        btn_cortis.config(text="Cortis",command=pausa)
+        btn_cortis.place(x=tam_borde*3+tam_opc*2,y=tam_borde*2+tam_casilla,height=tam_casilla,width=tam_opc)
         pass
     
 
@@ -468,11 +532,15 @@ def ventana_jugar(nombre,se_debe_cargar):
     partida_actual = []
     tiempo_partida = [0]
     partida_para_cargar = {}
+    # True = Corriendo | False = Pausa
+    estado_partida = [True]
+    celda_actual = [""]
 
     if se_debe_cargar:
         partida_para_cargar = uti.buscar_archivo("kakuro2025_juego_actual")[nombre]
         configuracion = partida_para_cargar["configuracion"]
         tiempo_partida[0]= partida_para_cargar["tiempo"]
+        celdas_jugables = partida_para_cargar["celdas_jugables"]
 
         partida_actual = buscar_partida(configuracion["nivel"],int(partida_para_cargar["num_partida"]))
         # Rellena la pila de undo
@@ -510,8 +578,12 @@ def ventana_jugar(nombre,se_debe_cargar):
     frame_usuario.place(x=20 + tam_juego + tam_casilla, y=20, width=tam_juego, height=tam_casilla+1)
     
     frame_opciones = tk.Frame(ventana,bg=uti.col_borde)
-    frame_opciones.place(x=20 + tam_juego + tam_casilla, y=20 + (tam_casilla*2), width=tam_juego, height=(tam_casilla+2)*3 + 2)
-
+    frame_opciones.place(x=20 + tam_juego + tam_casilla, y=20 + (tam_casilla*2), width=tam_juego, height=(tam_casilla+tam_borde)*2 + tam_borde)
+    
+    frame_mensajes = tk.Frame(ventana,bg=uti.col_borde)
+    frame_mensajes.place(x=20 + tam_juego + tam_casilla, y=20 + (tam_casilla*5)+tam_borde*2, width=tam_juego, height=tam_casilla+tam_borde*2.5 )
+    label_mensajes = tk.Label(frame_mensajes,text="Aquí verá cualquier alerta",font=("Arial",12),bg=uti.col_celda_desact,fg=uti.col_celda)
+    label_mensajes.place(x=tam_borde,y=tam_borde,width=tam_juego-tam_borde*2,height=tam_casilla)
     tablero={}
 
     # Llama a la función que genera la interfaz
@@ -522,10 +594,7 @@ def ventana_jugar(nombre,se_debe_cargar):
 
     
 
-    # True = Corriendo | False = Pausa
-    estado_partida = [True]
 
-    celda_actual = [""]
 
     # Pone a funcionar el cronómetro
     thread_temporizador = th.Thread(target=lambda:temporizador(tiempo_partida))
@@ -595,7 +664,6 @@ def ventana_configuracion(nombre):
     # Esta función cambia el tipo de reloj seleccionado
     # También, recibe la nueva opción seleccionada
     def cambiar_reloj(reloj):
-        print(reloj)
         btn_cronometro.config(bg=uti.col_celda)
         btn_temporizador.config(bg=uti.col_celda)
         btn_no_reloj.config(bg=uti.col_celda)
@@ -805,7 +873,7 @@ def ventana_principal(nombre):
         font=("Arial",12),
         bg="#f0f0f0",
         fg="#090909",
-        command= lambda: uti.abrir_ventana(ventana,lambda: ventana_jugar(nombre))
+        command= lambda: uti.ayuda("Kakuro")
     )
     btn_ayuda.grid(row=0,column=0,columnspan=1, padx=5,pady=5)
 
@@ -815,7 +883,7 @@ def ventana_principal(nombre):
         font=("Arial",12),
         bg="#f0f0f0",
         fg="#090909",
-        command= lambda: uti.abrir_ventana(ventana,lambda: ventana_jugar(nombre))
+        command= lambda: uti.acerca_de("Sobre el sistema")
     )
     btn_acerca_de.grid(row=0,column=1,columnspan=1, padx=5,pady=5)
 

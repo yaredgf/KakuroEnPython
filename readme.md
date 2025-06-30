@@ -1,5 +1,11 @@
 # Changelog
-## v0.3.0 (Aun sin subir)
+## v1.0.0
+    * Se agregó por completo la función de records
+    * Se agregó el despliegue de los mensajes de error
+    * Se corrigió el cargar partida
+    * Se terminó la primer versión completa del juego
+
+## v0.3.0
     * Se agregó por completo la función configuración
     * Se agregó la función de guardar partida
     * Se agregó la función de cargar partida

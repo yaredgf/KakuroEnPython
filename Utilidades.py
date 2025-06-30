@@ -72,6 +72,42 @@ def ayuda(nombre):
     ruta += "\Manuales\pc_manual_de_usuario_"+nombre+".pdf"
     webbrowser.open(ruta)
 
+def acerca_de(nombre):
+    ventana_acerca_de = tk.Tk()
+    
+    label1 = tk.Label(ventana_acerca_de,
+        text="Juego Kakuro",
+        font=("Arial",18),fg="#090909"
+    )
+    label1.grid(row=0,column=0,columnspan=3, padx=10,pady=5)
+
+    label2 = tk.Label(ventana_acerca_de,
+        text=nombre,
+        font=("Arial",16),fg="#090909"
+    )
+    label2.grid(row=1,column=0,columnspan=3, padx=5,pady=5)
+    
+    label3 = tk.Label(ventana_acerca_de,
+        text="Autor: Yared Moisés Guido Fallas",
+        font=("Arial",12),fg="#090909"
+    )
+    label3.grid(row=2,column=0,columnspan=3, padx=5,pady=5)
+
+    label4 = tk.Label(ventana_acerca_de,
+        text="Creado en: 30 de Junio de 2025",
+        font=("Arial",12),fg="#090909"
+    )
+    label4.grid(row=3,column=0,columnspan=2, padx=10,pady=5)
+    
+
+    label5 = tk.Label(ventana_acerca_de,
+        text="Versión: 1.0",
+        font=("Arial",12),fg="#090909"
+    )
+    label5.grid(row=3,column=2,columnspan=1, padx=10,pady=5)
+
+
+    ventana_acerca_de.mainloop()
 
 
 # Funcion que devuelve un Label con una imagen vacía de 10px
